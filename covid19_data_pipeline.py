@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from airflow import DAG
 from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.email import EmailOperator
 from airflow.operators.python import PythonOperator
@@ -87,7 +88,7 @@ with DAG(
         http_conn_id='https_covid19_api',  # Replace with your HTTP connection ID
         endpoint='/api/Cases/today-cases-all',
         headers={"Content-Type": "application/json"},
-        xcom_push=True,
+    #    xcom_push=True,
     )
 
     # Task 2: Save the fetched data into PostgreSQL
@@ -96,5 +97,13 @@ with DAG(
         python_callable=save_data_into_db,
     )
 
+    # Task 4: Query data from the schema-qualified table and log the results
+    t3 = PostgresOperator(
+        task_id='query_data',
+        postgres_conn_id='azure_postgres_conn',
+        sql=f"SELECT * FROM {SCHEMA_NAME}.{TABLE_NAME} LIMIT 10;",
+        do_xcom_push=True,  # Push results to XCom
+    )
     # Set task dependencies
-    t1 >> t2
+    t1 >> t2 >> t3
+
