@@ -9,7 +9,7 @@ from airflow.providers.http.operators.http import SimpleHttpOperator
 from airflow.utils.dates import days_ago
 
 # Define the schema and table name as global variables
-SCHEMA_NAME = "ratthaslip"
+SCHEMA_NAME = "xxx"
 TABLE_NAME = "weekly_covid19_reports"
 
 # Function to save data into the PostgreSQL database
