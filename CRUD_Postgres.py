@@ -3,7 +3,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 
 # Define the schema name as a global variable
-SCHEMA_NAME = "ratthaslip"
+SCHEMA_NAME = "xxx"
 
 # Define default arguments for the DAG
 default_args = {
