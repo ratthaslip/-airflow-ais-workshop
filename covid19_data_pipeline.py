@@ -77,7 +77,7 @@ with DAG(
     schedule_interval='@daily',
     default_args=default_args,
     description='A data pipeline for COVID-19 report using PostgresHook',
-    catchup=True
+    catchup=False
 ) as dag:
 
     # Task 1: Fetch data from the COVID-19 API
