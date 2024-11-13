@@ -4,14 +4,15 @@ from azure.storage.blob import BlobServiceClient
 from datetime import datetime
 
 # Define constants
-AZURE_ACCOUNT_NAME = "airflowlab"
-AZURE_ACCOUNT_KEY = ""
+AZURE_ACCOUNT_NAME = "airflowlab2024"
+AZURE_ACCESS_KEY = "" 
 CONTAINER_NAME = 'ais-container'
+BLOB_DIRECTORY = ""
 
 # Initialize BlobServiceClient once, so it can be used in all functions
 blob_service_client = BlobServiceClient(
     account_url=f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net",
-    credential=AZURE_ACCOUNT_KEY
+    credential=AZURE_ACCESS_KEY
 )
 
 # Define the function to list blobs
@@ -40,7 +41,7 @@ def upload_blob(file_path, blob_name):
 with DAG(
     dag_id="azure_blob_ingestion_with_upload",
     start_date=datetime(2023, 1, 1),
-    schedule_interval="@daily",
+    schedule_interval=None,
     catchup=False,
 ) as dag:
 
@@ -50,19 +51,21 @@ with DAG(
         python_callable=list_blobs,
     )
 
-    # Task to download a specific blob
-    download_blob_task = PythonOperator(
-        task_id="download_blob",
-        python_callable=download_blob,
-        op_args=["YourDirectoryxxx/sample.csv","/opt/airflow/dags/output/sample_blob.csv"]
-    )
-
     # Task to upload a file to the blob container
     upload_blob_task = PythonOperator(
         task_id="upload_blob",
         python_callable=upload_blob,
-        op_args=["/opt/airflow/dags/test.txt","YourDirectoryxxx/test_local.txt"]
+        op_args=["/opt/airflow/dags/test.txt",BLOB_DIRECTORY+"/"+"test_local.txt"]
+    )
+
+    # Task to download a specific blob
+    download_blob_task = PythonOperator(
+        task_id="download_blob",
+        python_callable=download_blob,
+        op_args=[BLOB_DIRECTORY+"/"+"test_local.txt","/opt/airflow/dags/output/test_blob.txt"]
     )
 
     # Task dependency setup
-    list_blobs_task >> download_blob_task >> upload_blob_task
+    #list_blobs_task >> download_blob_task >> upload_blob_task
+    # Task dependency setup
+    list_blobs_task  >> upload_blob_task >> download_blob_task
