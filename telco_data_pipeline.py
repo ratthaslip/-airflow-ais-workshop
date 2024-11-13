@@ -70,7 +70,7 @@ def transform_data(file_path):
 
 
 with DAG(
-    dag_id='telco_data_reconciliation_pipeline',
+    dag_id='telco_data_pipeline',
     schedule_interval='@daily',
     start_date=datetime(2024, 1, 1),
     catchup=False
