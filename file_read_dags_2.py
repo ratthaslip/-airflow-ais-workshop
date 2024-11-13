@@ -12,7 +12,7 @@ default_args = {
 
 # Initialize the DAG
 with DAG(
-    dag_id='file_read_dag',
+    dag_id='file_read_dag_2',
     default_args=default_args,
     schedule_interval='@daily',  # Adjust schedule as needed
     catchup=False
